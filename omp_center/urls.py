@@ -7,4 +7,5 @@ urlpatterns = [
     path("jwt-token", obtain_jwt_token),  # 通过此接口获取包含用户名和密码的令牌
     path('api/user/', include('apps.user.urls')),
     path('api/plan/', include('apps.plan.urls')),
+    path('api/statistics/', include('apps.data_statistics.urls')),
 ]

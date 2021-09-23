@@ -7,20 +7,12 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from utils import BaseResponse
-from utils.CookiesToDict import cookies_to_dict
+from utils.index import get_request_user_id
 import logging
 
 logging.basicConfig(level=logging.DEBUG, format='\n|%(asctime)s|%(name)s|%(levelname)s|%(filename)s|'
                                                 '%(funcName)s[%(lineno)d]|%(message)s\n')
 logger = logging.getLogger(__name__)
-
-
-def _get_request_user_id(request):
-    cookie_dict = cookies_to_dict(request.META.get('HTTP_COOKIE'))
-    email = cookie_dict['user_email']
-    logging.debug("email: " + email)
-    user = models.OmpUser.objects.get(email=email)
-    return user.id
 
 
 class MonthPlan(ModelViewSet):
@@ -34,11 +26,11 @@ class MonthPlan(ModelViewSet):
     search_fields = ('task_name',)
 
     def get_queryset(self):
-        user_id = _get_request_user_id(self.request)
+        user_id = get_request_user_id(self.request)
         return models.MonthPlan.objects.filter(status__in=(0, 1), user=user_id)
 
     def create(self, request, *args, **kwargs):
-        request.data['user'] = _get_request_user_id(self.request)
+        request.data['user'] = get_request_user_id(self.request)
         logging.debug(request.data)
 
         serializer = self.get_serializer(data=request.data)

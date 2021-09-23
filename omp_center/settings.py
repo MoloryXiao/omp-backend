@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'apps.plan',
     'apps.diary',
     'apps.qa',
+    'apps.data_statistics'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
@@ -53,7 +54,7 @@ REST_FRAMEWORK = {
     # 定义全局分页器
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     # 默认每页返回数量
-    'PAGE_SIZE': 10,
+    'PAGE_SIZE': 100,
     # 指定后端过滤器
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend',
