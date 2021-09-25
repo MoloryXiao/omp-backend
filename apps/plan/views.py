@@ -27,7 +27,7 @@ class MonthPlan(ModelViewSet):
 
     def get_queryset(self):
         user_id = get_request_user_id(self.request)
-        return models.MonthPlan.objects.filter(status__in=(0, 1), user=user_id)
+        return models.MonthPlan.objects.filter(status__in=(0, 1), user=user_id).order_by("-status", "task_type")
 
     def create(self, request, *args, **kwargs):
         request.data['user'] = get_request_user_id(self.request)
