@@ -25,3 +25,15 @@ class CompletedTimesSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+
+
+class WeekPlanSerializer(serializers.ModelSerializer):
+    """周计划序列化器"""
+    class Meta:
+        model = models.WeekPlan
+        fields = "__all__"
+        extra_kwargs = {
+            'user': {
+                'write_only': True
+            }
+        }
