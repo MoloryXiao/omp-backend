@@ -3,10 +3,11 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.viewsets import ModelViewSet
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from apps.plan import models, serializers, filter
-from django_filters.rest_framework import DjangoFilterBackend, FilterSet, DateFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from apps.plan.filter import WeekPlanFilter
 from utils import BaseResponse
 from utils.index import get_request_user_id
 import logging
@@ -97,28 +98,21 @@ class MonthPlan(ModelViewSet):
         return Response(data=BaseResponse.response_ok(),status=status.HTTP_200_OK)
 
 
-class WeekPlanFilter(FilterSet):
-    # 开始时间
-    start_date = DateFilter(field_name='start_date', lookup_expr='gte')
-    # 结束时间
-    end_date = DateFilter(field_name='end_date', lookup_expr='lte')
-
-
 class WeekPlan(ModelViewSet):
     queryset = models.WeekPlan.objects.all()
     serializer_class = serializers.WeekPlanSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
 
     pagination_class = MonthPlanPageNum
-    filter_backends = (DjangoFilterBackend, OrderingFilter, filter.TaskNameSearchFilter)
-    filterset_class = WeekPlanFilter
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
     ordering_fields = ('id',)
-    filterset_fields = ('user', 'task_type', 'status')
-    search_fields = ('task_name',)
+    filterset_class = WeekPlanFilter
 
     def get_queryset(self):
         user_id = get_request_user_id(self.request)
-        return models.WeekPlan.objects.filter(status__in=(0, 1), user=user_id).order_by("status", "task_type")
+        return models.WeekPlan.objects\
+            .filter(status__in=(0, 1), user=user_id)\
+            .order_by("status", "task_type", "start_date", "end_date")
 
     def create(self, request, *args, **kwargs):
         request.data['user'] = get_request_user_id(self.request)
@@ -136,4 +130,17 @@ class WeekPlan(ModelViewSet):
         instance.status = 2
         instance.save()
         logging.debug("plan_id: "+str(instance.id)+" soft deleted.")
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(methods=['post'], detail=True)
+    def status_inversion(self, request, *args, **kwargs):
+        instance = self.get_object()
+        logger.debug(str(instance) + ' before: ' + str(instance.status))
+        # 状态取反
+        if instance.status == 1:
+            instance.status = 0
+        elif instance.status == 0:
+            instance.status = 1
+        logger.debug(str(instance) + ' after: ' + str(instance.status))
+        instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
