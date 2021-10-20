@@ -59,7 +59,7 @@ class MonthPlan(ModelViewSet):
         insert_operation_log(ob_id=new_object_id,
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.CREATE.value,
-                             op_remark='新建任务',
+                             op_remark='新建月计划任务',
                              operator=get_request_user_email(self.request))
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -76,7 +76,7 @@ class MonthPlan(ModelViewSet):
         insert_operation_log(ob_id=instance.id,
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.UPDATE.value,
-                             op_remark='更新任务',
+                             op_remark='更新月计划任务',
                              operator=get_request_user_email(self.request))
         return Response(serializer.data)
 
@@ -90,7 +90,7 @@ class MonthPlan(ModelViewSet):
         insert_operation_log(ob_id=instance.id,
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.DELETE.value,
-                             op_remark='删除任务',
+                             op_remark='删除月计划任务',
                              operator=get_request_user_email(self.request))
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -115,7 +115,7 @@ class MonthPlan(ModelViewSet):
         insert_operation_log(ob_id=month_plan.id,
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.UPDATE.value,
-                             op_remark='任务当前次数+1',
+                             op_remark='月计划任务当前次数+1',
                              operator=get_request_user_email(self.request))
         return Response(data=BaseResponse.response_ok(),status=status.HTTP_200_OK)
 
@@ -140,7 +140,7 @@ class MonthPlan(ModelViewSet):
         insert_operation_log(ob_id=month_plan.id,
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.UPDATE.value,
-                             op_remark='任务当前次数-1',
+                             op_remark='月计划任务当前次数-1',
                              operator=get_request_user_email(self.request))
         return Response(data=BaseResponse.response_ok(),status=status.HTTP_200_OK)
 
@@ -178,7 +178,7 @@ class WeekPlan(ModelViewSet):
         insert_operation_log(ob_id=new_object_id,
                              ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
                              op_type=OperationType.CREATE.value,
-                             op_remark='新建任务',
+                             op_remark='新建周计划任务',
                              operator=get_request_user_email(self.request))
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
@@ -195,7 +195,7 @@ class WeekPlan(ModelViewSet):
         insert_operation_log(ob_id=instance.id,
                              ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
                              op_type=OperationType.UPDATE.value,
-                             op_remark='更新任务',
+                             op_remark='更新周计划任务',
                              operator=get_request_user_email(self.request))
         return Response(serializer.data)
 
@@ -209,7 +209,7 @@ class WeekPlan(ModelViewSet):
         insert_operation_log(ob_id=instance.id,
                              ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
                              op_type=OperationType.DELETE.value,
-                             op_remark='删除任务',
+                             op_remark='删除周计划任务',
                              operator=get_request_user_email(self.request))
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -225,7 +225,7 @@ class WeekPlan(ModelViewSet):
             insert_operation_log(ob_id=instance.id,
                                  ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
                                  op_type=OperationType.UPDATE.value,
-                                 op_remark='更新任务状态为未完成',
+                                 op_remark='更新周计划任务状态为未完成',
                                  operator=get_request_user_email(self.request))
         elif instance.status == 0:
             instance.status = 1
@@ -234,7 +234,7 @@ class WeekPlan(ModelViewSet):
             insert_operation_log(ob_id=instance.id,
                                  ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
                                  op_type=OperationType.UPDATE.value,
-                                 op_remark='更新任务状态为已完成',
+                                 op_remark='更新周计划任务状态为已完成',
                                  operator=get_request_user_email(self.request))
         logger.debug(str(instance) + ' after: ' + str(instance.status))
         return Response(status=status.HTTP_204_NO_CONTENT)
