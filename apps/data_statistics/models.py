@@ -27,3 +27,25 @@ class DailyTimeCollect(models.Model):
     class Meta:
         db_table = 't_daily_time_collect'
         ordering = ['id']
+
+
+class OperationRecord(models.Model):
+    id = models.BigAutoField(auto_created=True, primary_key=True, db_column='FuiId', verbose_name='ID')
+
+    object_id = models.BigIntegerField(db_column='FuiObjectId', verbose_name='操作对象ID', default=0, null=False)
+    object_category = models.SmallIntegerField(db_column='FuiObjectCategory', verbose_name='操作对象类别 1:月任务; 2:周任务', default=0, null=False)
+
+    operation_type = models.SmallIntegerField(db_column='FuiOpType', verbose_name='操作类型 1:创建; 2:更新; 3:删除', default=0, null=False)
+    operation_remark = models.TextField(db_column='FuiOpRemark', verbose_name='操作备注', null=True, blank=True)
+
+    status = models.SmallIntegerField(db_column='FuiStatus', verbose_name='状态', help_text='状态 1:有效,2:无效', default=1)
+    operator = models.CharField(db_column='FstrOperator', verbose_name='操作者', max_length=200, default='', null=False)
+
+    create_time = models.DateTimeField(db_column='FuiCreateTime', verbose_name='创建时间', help_text='创建时间', auto_now_add=True)
+    update_time = models.DateTimeField(db_column='FuiUpdateTime', verbose_name='更新时间', help_text='更新时间', auto_now=True)
+
+    objects = models.Manager()
+
+    class Meta:
+        db_table = 't_operation_record'
+        ordering = ['id']
