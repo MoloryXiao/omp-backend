@@ -46,6 +46,11 @@ class OperationRecord(models.Model):
 
     objects = models.Manager()
 
+    @property
+    def operation_type_name(self):
+        name_list = ['none', '创建操作', '更新操作', '删除操作']
+        return name_list[self.operation_type]
+
     class Meta:
         db_table = 't_operation_record'
         ordering = ['id']

@@ -12,3 +12,11 @@ class DailyTimeCollectSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
+
+
+class OpRecordSerializer(serializers.ModelSerializer):
+    operation_type_name = serializers.CharField(required=False)
+    """日常时间统计序列化器"""
+    class Meta:
+        model = models.OperationRecord
+        fields = "__all__"

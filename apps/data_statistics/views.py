@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 from apps.data_statistics import models, serializers
 from utils.index import get_request_user_id
@@ -14,3 +15,13 @@ class DailyTimeCollect(ModelViewSet):
     def get_queryset(self):
         user_id = get_request_user_id(self.request)
         return models.DailyTimeCollect.objects.filter(status=1, user=user_id).order_by("year", "month", "day")
+
+
+class OperationRecordModelView(ModelViewSet):
+    queryset = models.OperationRecord.objects.all()
+    serializer_class = serializers.OpRecordSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_fields = ('object_category', 'object_id')
+
+    def get_queryset(self):
+        return models.OperationRecord.objects.filter(status=1).order_by('-create_time')

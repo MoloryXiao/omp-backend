@@ -89,6 +89,8 @@ class DiaryHandler(APIView):
         print(diary_year, '-', diary_month, '-', diary_day)
 
         [time_record_list, time_distribution] = handle_time_distribution(html_code)
+        if not time_record_list:
+            return Response(data=response_error(msg='请检查日记格式是否正确！'), status=status.HTTP_400_BAD_REQUEST)
 
         hotpot_list = build_time_hotpot(time_record_list)
         # 展示二维数组内容
@@ -102,6 +104,8 @@ class DiaryHandler(APIView):
 def handle_time_distribution(html_code):
     soup = BeautifulSoup(html_code, 'html.parser', from_encoding='utf-8')
     diary_table = soup.find_all("div")
+    if len(diary_table) % 3 != 0:
+        return [None, None]
 
     column_count = 0
     start_time = ''
@@ -121,7 +125,7 @@ def handle_time_distribution(html_code):
                 start_time = time_str_list[0]
                 end_time = time_str_list[1]
             else:
-                return Response(data=response_error(msg="时间样式异常", data=str(time_str_list)),
+                return Response(data=response_error(msg="请检查日记格式是否正确！", data=str(time_str_list)),
                                 status=status.HTTP_400_BAD_REQUEST)
         elif column_count == 2:
             task_type = item.string
