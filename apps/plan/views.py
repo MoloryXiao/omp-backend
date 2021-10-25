@@ -97,6 +97,7 @@ class MonthPlan(ModelViewSet):
     @action(methods=['post'], detail=True)
     def increase_times(self, request, pk):
         month_plan = self.get_object()
+        logging.debug(request.data.get('date'))
         logging.debug(month_plan)
         logging.debug("当前已完成次数/目标次数："+str(month_plan.completed_times)+"/"+str(month_plan.target_times))
         if month_plan.completed_times + 1 > month_plan.target_times:
@@ -111,17 +112,18 @@ class MonthPlan(ModelViewSet):
         serializer = self.get_serializer(month_plan, data=request.data)
         serializer.is_valid()
         logging.debug("已增加，当前已完成次数/目标次数："+str(month_plan.completed_times)+"/"+str(month_plan.target_times))
-        # 插入操作记录日志
         insert_operation_log(ob_id=month_plan.id,
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.UPDATE.value,
                              op_remark='月计划任务当前次数+1',
-                             operator=get_request_user_email(self.request))
+                             operator=get_request_user_email(self.request),
+                             op_time=request.data.get('date'))
         return Response(data=BaseResponse.response_ok(),status=status.HTTP_200_OK)
 
     @action(methods=['post'], detail=True)
     def decrease_times(self, request, pk):
         month_plan = self.get_object()
+        logging.debug(request.data.get('date'))
         logging.debug(month_plan)
         logging.debug("当前已完成次数/目标次数：" + str(month_plan.completed_times) + "/" + str(month_plan.target_times))
         if month_plan.completed_times - 1 < 0:
@@ -141,7 +143,8 @@ class MonthPlan(ModelViewSet):
                              ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
                              op_type=OperationType.UPDATE.value,
                              op_remark='月计划任务当前次数-1',
-                             operator=get_request_user_email(self.request))
+                             operator=get_request_user_email(self.request),
+                             op_time=request.data.get('date'))
         return Response(data=BaseResponse.response_ok(),status=status.HTTP_200_OK)
 
 
@@ -217,24 +220,22 @@ class WeekPlan(ModelViewSet):
     def status_inversion(self, request, *args, **kwargs):
         instance = self.get_object()
         logger.debug(str(instance) + ' before: ' + str(instance.status))
+        op_remark = ''
         # 状态取反
         if instance.status == 1:
             instance.status = 0
             instance.save()
-            # 插入操作记录日志
-            insert_operation_log(ob_id=instance.id,
-                                 ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
-                                 op_type=OperationType.UPDATE.value,
-                                 op_remark='更新周计划任务状态为未完成',
-                                 operator=get_request_user_email(self.request))
+            op_remark = '更新周计划任务状态为未完成'
         elif instance.status == 0:
             instance.status = 1
             instance.save()
-            # 插入操作记录日志
-            insert_operation_log(ob_id=instance.id,
-                                 ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
-                                 op_type=OperationType.UPDATE.value,
-                                 op_remark='更新周计划任务状态为已完成',
-                                 operator=get_request_user_email(self.request))
+            op_remark = '更新周计划任务状态为已完成'
+        # 插入操作记录日志
+        insert_operation_log(ob_id=instance.id,
+                             ob_category=ObjectCategory.WEEK_PLAN_TASK.value,
+                             op_type=OperationType.UPDATE.value,
+                             op_remark=op_remark,
+                             operator=get_request_user_email(self.request),
+                             op_time=request.data.get('date'))
         logger.debug(str(instance) + ' after: ' + str(instance.status))
         return Response(status=status.HTTP_204_NO_CONTENT)
