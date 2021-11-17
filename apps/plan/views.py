@@ -12,6 +12,7 @@ from utils import BaseResponse
 from utils.index import get_request_user_id, get_request_user_email, insert_operation_log
 from common.enumerate.index import ObjectCategory, OperationType
 import logging
+import json
 
 logging.basicConfig(level=logging.DEBUG, format='\n|%(asctime)s|%(name)s|%(levelname)s|%(filename)s|'
                                                 '%(funcName)s[%(lineno)d]|%(message)s\n')
@@ -146,6 +147,33 @@ class MonthPlan(ModelViewSet):
                              operator=get_request_user_email(self.request),
                              op_time=request.data.get('date'))
         return Response(data=BaseResponse.response_ok(),status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=True)
+    def save_todo_list(self, request, pk):
+        month_plan = self.get_object()
+        logging.debug(month_plan)
+        logging.debug(request.data.get('todo_list'))
+        todo_list = json.loads(month_plan.todo_list)
+        logging.debug(todo_list["todo_list_detail"])
+
+        todo_list["todo_list_detail"] = request.data.get('todo_list')
+
+        month_plan.todo_list = json.dumps(todo_list)
+        month_plan.save()
+
+        # 插入操作记录日志
+        insert_operation_log(ob_id=month_plan.id,
+                             ob_category=ObjectCategory.MONTH_PLAN_TASK.value,
+                             op_type=OperationType.UPDATE.value,
+                             op_remark='修改月计划任务TodoList',
+                             operator=get_request_user_email(self.request))
+        return Response(data=BaseResponse.response_ok(), status=status.HTTP_200_OK)
+
+    @action(methods=['get'], detail=True)
+    def get_todo_list(self, request, pk):
+        month_plan = self.get_object()
+        logging.debug(month_plan)
+        return Response(data=BaseResponse.response_ok(data=month_plan.todo_list), status=status.HTTP_200_OK)
 
 
 class WeekPlan(ModelViewSet):

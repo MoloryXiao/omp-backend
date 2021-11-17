@@ -15,8 +15,11 @@ class MonthPlan(models.Model):
                                          default=0, null=False)
     target_times = models.IntegerField(db_column='FuiTargetTimes', verbose_name='目标次数', default=0)
     completed_times = models.IntegerField(db_column='FuiCompletedTimes', verbose_name='完成次数', default=0)
-    multi_stage = models.CharField(db_column='FstrMultiStage', verbose_name='阶段性目标 json格式', max_length=512,
-                                   null=True, blank=True)
+    reward_mechanism = models.SmallIntegerField(db_column='FuiRewardMechanism', verbose_name='奖励机制 1:一次性 2:阶段性',
+                                                default=0, null=False)
+    multi_stages = models.CharField(db_column='FstrMultiStages', verbose_name='阶段性目标 json格式', max_length=512,
+                                    null=True, blank=True)
+    todo_list = models.TextField(db_column='FstrTodoList', verbose_name='Todo清单 json格式', null=True, blank=True)
     remark = models.TextField(db_column='FstrRemark', verbose_name='备注', null=True, blank=True)
 
     status = models.SmallIntegerField(db_column='FuiStatus', verbose_name='状态 0:关闭 1:开启,2:废弃', default=1)
