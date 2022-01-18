@@ -6,7 +6,6 @@
 
  @Author: lette.xiao
 
- @Copyright（C）: 2014-2021 X-Financial Inc. All rights reserved.
 """
 import enum
 

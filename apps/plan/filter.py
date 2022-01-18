@@ -6,7 +6,6 @@
 
  @Author: lette.xiao
 
- @Copyright（C）: 2014-2021 X-Financial Inc. All rights reserved.
 """
 from rest_framework import filters
 from django_filters.rest_framework import FilterSet, DateFilter, CharFilter

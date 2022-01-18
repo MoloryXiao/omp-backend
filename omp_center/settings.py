@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'apps.plan',
     'apps.diary',
     'apps.qa',
-    'apps.data_statistics'
+    'apps.data_statistics',
+    'apps.summary'
 ]
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',

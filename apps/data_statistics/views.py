@@ -3,9 +3,20 @@ from rest_framework.viewsets import ModelViewSet
 from apps.data_statistics import models, serializers
 from utils.index import get_request_user_id
 from rest_framework.filters import OrderingFilter
+from rest_framework.pagination import PageNumberPagination
+
+
+class DataStatisticsPageNum(PageNumberPagination):
+    # 查询字符串中代表页码的参数名，有默认值：page
+    page_query_param = 'page'
+    # 查询字符串中代表每页返回数据数量的参数名，默认值：None
+    page_size_query_param = 'limit'
+    # 默认页大小
+    page_size = 365
 
 
 class DailyTimeCollect(ModelViewSet):
+    pagination_class = DataStatisticsPageNum
     queryset = models.DailyTimeCollect.objects.all()
     serializer_class = serializers.DailyTimeCollectSerializer
 

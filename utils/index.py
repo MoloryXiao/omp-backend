@@ -6,7 +6,6 @@
 
  @Author: lette.xiao
 
- @Copyright（C）: 2014-2021 X-Financial Inc. All rights reserved.
 """
 from .CookiesToDict import cookies_to_dict
 from apps.user.models import OmpUser
